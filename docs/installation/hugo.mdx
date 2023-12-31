@@ -1,0 +1,100 @@
+---
+sidebar_label: Hugo
+---
+
+import GitHubSecret from './_partials/github-secret.mdx';
+import VerifyInstallation from './_partials/verify-installation.mdx';
+
+# Pull request previews for Hugo
+
+Here's a step-by-step guide to help you install PushPreview in your Hugo project.
+
+## Prerequisites
+
+Before you begin, you'll need to have the following:
+
+- A PushPreview account. If you don't have one, [sign up for free](https://app.pushpreview.com/accounts/signup/).
+- A Hugo site created.
+
+## 1. Add the workflow to your repository
+
+To set up the PushPreview workflow in your Hugo project:
+
+1. Go to the `.github/workflows` directory in your Hugo repository.
+
+1. Create a new file named `pushpreview.yml`.
+
+1. Copy the following content into `pushpreview.yml`:
+
+    ```yaml
+    name: PushPreview
+
+    on:
+      pull_request_target:
+        types:
+          - labeled
+
+    jobs:
+      preview:
+        runs-on: ubuntu-latest
+        if: github.event.label.name == 'preview'
+        steps:
+          - uses: actions/checkout@v3
+          - name: Comment
+            run: |
+              gh pr comment ${{ github.event.pull_request.number }} --repo ${{ github.repository }} --body "⚙️ Hang tight! PushPreview is currently building your preview. We'll share the URL as soon as it's ready."
+            env:
+              GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+          - uses: actions/setup-node@v3
+            with:
+              node-version: 18
+
+          - name: Set BASE_URL
+            run: echo "BASE_URL=/github/${{ github.repository }}/${{ github.event.number }}/" >> $GITHUB_ENV
+
+          - name: Build site
+            run: |
+              cd docs
+              yarn install --frozen-lockfile
+              yarn build
+
+          - name: Generate preview
+            uses: PushLabsHQ/pushpreview-action@1.0.5
+            with:
+              source-directory: ./docs/build
+              github-token: ${{ secrets.GITHUB_TOKEN }}
+              pushpreview-token: ${{ secrets.PUSHPREVIEW_TOKEN }}
+    ```
+
+1. Modify the **Build site step** to align with your Hugo build process. For example:
+
+    ```yaml
+    - name: Build site
+      run: |
+        cd docs
+        sudo apt-get install -y hugo
+        hugo
+    ```
+    
+1. Ensure the `source-directory` in the **Generate preview** step points to your Hugo build output folder, typically `./public`:
+
+    ```yaml
+    - name: Generate preview
+      uses: PushLabsHQ/pushpreview-action@1.0.5
+      with:
+        # highlight-next-line
+        source-directory: ./docs/public
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        pushpreview-token: ${{ secrets.PUSHPREVIEW_TOKEN }}
+    ```
+
+1. Save your changes and push the updated `pushpreview.yml` file to your repository.
+
+## 2. Configure the GitHub secret
+
+<GitHubSecret />
+
+## 3. Verify the installation
+
+<VerifyInstallation />

@@ -1,0 +1,120 @@
+---
+sidebar_label: Docusaurus
+---
+
+import GitHubSecret from './_partials/github-secret.mdx';
+import VerifyInstallation from './_partials/verify-installation.mdx';
+
+# Pull request previews for Docusaurus
+
+Here's a step-by-step guide to help you install PushPreview in your Docusaurus project.
+
+## Prerequisites
+
+Before you begin, you'll need to have the following:
+
+- A PushPreview account. If you don't have one, [sign up for free](https://app.pushpreview.com/accounts/signup/).
+- A Docusaurus site created.
+
+## 1. Add the workflow to your repository
+
+To set up the PushPreview workflow in your Docusaurus project:
+
+1. Go to the `.github/workflows` directory in your Docusaurus repository.
+
+1. Create a new file named `pushpreview.yml`.
+
+1. Copy the following content into `pushpreview.yml`:
+
+    ```yaml
+    name: PushPreview
+
+    on:
+      pull_request_target:
+        types:
+          - labeled
+
+    jobs:
+      preview:
+        runs-on: ubuntu-latest
+        if: github.event.label.name == 'preview'
+        steps:
+          - uses: actions/checkout@v3
+          - name: Comment
+            run: |
+              gh pr comment ${{ github.event.pull_request.number }} --repo ${{ github.repository }} --body "⚙️ Hang tight! PushPreview is currently building your preview. We'll share the URL as soon as it's ready."
+            env:
+              GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+          - uses: actions/setup-node@v3
+            with:
+              node-version: 18
+
+          - name: Set BASE_URL
+            run: echo "BASE_URL=/github/${{ github.repository }}/${{ github.event.number }}/" >> $GITHUB_ENV
+
+          - name: Build site
+            run: |
+              cd docs
+              yarn install --frozen-lockfile
+              yarn build
+
+          - name: Generate preview
+            uses: PushLabsHQ/pushpreview-action@1.0.5
+            with:
+              source-directory: ./docs/build
+              github-token: ${{ secrets.GITHUB_TOKEN }}
+              pushpreview-token: ${{ secrets.PUSHPREVIEW_TOKEN }}
+    ```
+
+1. Modify the **Build site step** to align with your Docusaurus build process. For example:
+
+    ```yaml
+    - name: Build site
+      run: |
+        cd docs
+        yarn install --frozen-lockfile
+        yarn build
+    ```
+    
+1. Ensure the `source-directory` in the **Generate preview** step points to your Docusaurus build output folder, typically `./build`:
+
+    ```yaml
+    - name: Generate preview
+      uses: PushLabsHQ/pushpreview-action@1.0.5
+      with:
+        # highlight-next-line
+        source-directory: ./docs/build
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        pushpreview-token: ${{ secrets.PUSHPREVIEW_TOKEN }}
+    ```
+
+1. Save your changes and push the updated `pushpreview.yml` file to your repository.
+
+## 2. Configure the GitHub secret
+
+<GitHubSecret />
+
+## 3. Edit Docusaurus configuration
+
+To ensure your Docusaurus site correctly supports preview builds, you'll need to adjust the base URL setting in the Docusaurus configuration.
+This modification allows your site to correctly resolve URLs in the context of the preview environment.
+Follow the steps below to make these changes:
+
+1. Open the `docusaurus.config.js` file located in the root directory of your Docusaurus project.
+
+1. Modify the `baseUrl` setting to dynamically adapt to different environments, particularly for preview deployments. Update the setting as follows:
+
+  ```js
+  module.exports = {
+    // ... other configurations ...
+    baseUrl: process.env.BASE_URL || '/',
+    // ... other configurations ...
+  };
+  ```
+
+3. Save the changes and push the updated `docusaurus.config.js` file to your repository to enable correct URL handling in preview builds.
+
+## 4. Verify the installation
+
+<VerifyInstallation />
