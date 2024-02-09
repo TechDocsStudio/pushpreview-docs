@@ -21,13 +21,17 @@ With your account ready, move on to creating your first integration.
 
 To create a new integration, follow these steps:
 
-1. In the PushPreview dashboard, go to the **Integrations** tab.
+In your PushFeedback dashboard, click the **Integrations** tab in the top navbar.
+
 2. Click the **Create integration** button.
+
+    ![Preview changes](./images/pushpreview-integration.png)
+
 3. Complete the setup wizard:
 
-    1. **Add the GitHub workflow to your repository:** Add the pushpreview.yml workflow to your repository. This workflow responds to pull requests and comments, triggering previews.
-    2. **Configure the Github secret:** Add the `PUSHPREVIEW_TOKEN` secret in your repository's or organization's GitHub settings to authenticate requests.
-    3. **Trigger the preview**: Add the tag `preview` to your pull requests to initiate the preview generation process. The preview tag can be selected from existing tags or created anew if it doesn't exist.
+    1. **Add the GitHub workflow to your repository:** Add the `pushpreview.yml` workflow under the `.github/workflow` directory of your repository.
+    2. **Configure the GitHub secret:** Add the `PUSHPREVIEW_TOKEN` secret returned by the wizard within your repository's or organization's [GitHub settings](https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions#creating-secrets-for-a-repository).
+    3. **Trigger the preview**: Add the  `preview` label to your pull requests to initiate the preview generation process. If the label doesn’t exist, [create a new one](https://docs.github.com/en/issues/using-labels-and-milestones-to-track-work/managing-labels#creating-a-label).
 
 :::info
 If you encounter any issues, refer to the [Installation](category/installation) section for CMS-specific guides.
