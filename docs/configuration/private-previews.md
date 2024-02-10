@@ -18,6 +18,9 @@ To make all previews private by default for all your integrations, follow these 
 1. Log in to your PushPreview account.
 1. Navigate to the **Team** page.
 1. Turn on the **Private previews** option.
+
+    ![Enable private previews](../images/enable-private-previews.png)
+
 1. Save the changes.
 
 This setting ensures that every new preview generated will be private, accessible only to users with the appropriate permissions.
@@ -29,8 +32,15 @@ For more granular control, you can set privacy settings on a per-integration bas
 1. Log into your PushPreview account.
 1. Navigate to the **Integrations** page.
 1. Choose the integration you want to modify.
+
 1. Click **Edit**.
+
+    ![Edit integration](../images/edit-integration.png)
+
 1. Enable the **Private previews** option.
+
+    ![Enable private previews](../images/enable-private-previews.png)
+
 1. Save the changes.
 
 This option is ideal for teams that require different privacy levels for various integrations, allowing flexibility and control over who can access specific previews.

@@ -64,7 +64,8 @@ const config = {
         buttonPosition: 'center-right',
         modalPosition: 'sidebar-right'
       }
-    ]
+    ],
+    'docusaurus-plugin-image-zoom'
   ],
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
@@ -90,11 +91,22 @@ const config = {
         theme: lightCodeTheme,
         darkTheme: darkCodeTheme,
       },
+
+      zoom: {
+        selector: '.markdown img',
+        background: {
+          light: 'rgb(255, 255, 255)',
+          dark: 'rgb(50, 50, 50)'
+        },
+        config: {
+        }
+      }
     }),
     scripts: [
       'https://www.googletagmanager.com/gtag/js?id=G-1TMTNMCLSX',
       '/analytics.js'
     ],
+    
   
   };
 
