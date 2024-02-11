@@ -60,7 +60,7 @@ To set up the PushPreview workflow in your MkDocs project:
               yarn build
 
           - name: Generate preview
-            uses: PushLabsHQ/pushpreview-action@1.0.5
+            uses: PushLabsHQ/pushpreview-action@1.0.6
             with:
               source-directory: ./docs/build
               github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -89,7 +89,7 @@ To set up the PushPreview workflow in your MkDocs project:
 
     ```yaml
     - name: Generate preview
-      uses: PushLabsHQ/pushpreview-action@1.0.5
+      uses: PushLabsHQ/pushpreview-action@1.0.6
       with:
         # highlight-next-line
         source-directory: ./docs/site
