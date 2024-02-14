@@ -1,0 +1,78 @@
+---
+sidebar_label: GitHub
+---
+
+# Pull request previews for GitHub
+
+Integrating PushPreview with GitHub empowers efficient collaboration and code quality through automated preview generation directly within your workflow. This documentation details the installation, authentication, and configuration specifics of PushPreview integration with GitHub.
+
+## Quickstart
+
+Enable pull request previews on GitHub with PushPreview by following the [Quickstart](/quickstart.md). 
+
+This step-by-step guide explains how to integrate automated preview generation into your GitHub workflow, streamlining review processes for web projects and applications
+
+## Authentication
+
+Previews generated through PushPreview are public by default. However, for added security or confidentiality, PushPreview offers private previews. For more information, see [Private previews](/configuration/private-previews.md).
+
+When accessing a private preview, PushPreview prompts for a GitHub login to ensure secure access:
+
+![GitHub enable](../images/auth-github.png)
+
+Only users with permission to see the repository can access the preview.
+
+PushPreview uses OAuth 2.0 authentication to maintain a secure connection with GitHub.
+
+## GitHub Action
+
+The [PushLabsHQ/pushpreview-action](https://github.com/PushLabsHQ/pushpreview-action) facilitates the connection between GitHub and PushPreview, integrating it into your GitHub workflow.
+
+### Example usage
+
+Below is an example of how to use the `push-preview-action` in a workflow:
+
+```yaml
+ name: PushPreview
+
+ on:
+   pull_request_target:
+     types:
+       - labeled
+
+ jobs:
+   preview:
+     runs-on: ubuntu-latest
+     if: github.event.label.name == 'preview'
+     steps:
+       - uses: actions/checkout@v3
+       - name: Comment
+         run: |
+           gh pr comment ${{ github.event.pull_request.number }} --repo ${{ github.repository }} --body "⚙️ Hang tight! PushPreview is currently building your preview. We'll share the URL as soon as it's ready."
+         env:
+           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+       - uses: actions/setup-node@v3
+         with:
+           node-version: 18
+
+       - name: Set BASE_URL
+         run: echo "BASE_URL=/github/${{ github.repository }}/${{ github.event.number }}/" >> $GITHUB_ENV
+       
+       # Replace with your docs build commands
+       - name: Build site
+         run: |
+           cd docs
+           yarn install --frozen-lockfile
+           yarn build
+
+       - name: Generate preview
+         uses: PushLabsHQ/pushpreview-action@1.0.6
+         with:
+           # Replace with your docs output directory
+           source-directory: ./docs/build
+           github-token: ${{ secrets.GITHUB_TOKEN }}
+           pushpreview-token: ${{ secrets.PUSHPREVIEW_TOKEN }}
+```
+
+For more information on customizing the workflow to your build process, refer to the [Installation](/category/installation) section for CMS-specific guides.
