@@ -21,7 +21,7 @@ With your account ready, move on to creating your first integration.
 
 To create a new integration, follow these steps:
 
-In your PushFeedback dashboard, click the **Integrations** tab in the top navbar.
+In your PushPreview dashboard, click the **Integrations** tab in the top navbar.
 
 2. Click the **Create integration** button.
 
