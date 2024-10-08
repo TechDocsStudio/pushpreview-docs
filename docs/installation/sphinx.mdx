@@ -71,8 +71,8 @@ To set up the PushPreview workflow in your Sphinx project:
 
     ```yaml
     - uses: actions/setup-python@v2
-        with:
-          python-version: 3.8  # Adjust the Python version as needed for your project
+      with:
+        python-version: 3.8  # Adjust the Python version as needed for your project
     ```
 
 1. Modify the **Build site step** to align with your Sphinx build process. For example:
@@ -97,13 +97,29 @@ To set up the PushPreview workflow in your Sphinx project:
         pushpreview-token: ${{ secrets.PUSHPREVIEW_TOKEN }}
     ```
 
-1. Save your changes and push the updated `pushpreview.yml` file to your repository.
-
 ## 2. Configure the GitHub secret
 
 <GitHubSecret />
 
-## 3. Verify the installation
+## 3. Edit Sphinx configuration
+
+To ensure your Sphinx site correctly supports preview builds, you'll need to adjust the base URL setting in the Sphinx configuration.
+This modification allows your site to correctly resolve URLs in the context of the preview environment.
+
+Follow the steps below to make these changes:
+
+1. Open the `conf.py` file located in the root directory of your Sphinx project.
+
+1. Modify the `base_url` setting to dynamically adapt to different environments, particularly for preview deployments. Update the setting as follows:
+
+    ```python
+    import os
+    html_baseurl = os.getenv('BASE_URL', 'https://yourdomain.extension')
+    ```
+
+1. Save your changes and push the updated `pushpreview.yml` file to your repository.
+
+## 4. Verify the installation
 
 <VerifyInstallation />
 
