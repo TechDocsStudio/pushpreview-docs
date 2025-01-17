@@ -31,46 +31,40 @@ The [TechDocsStudio/pushpreview-action](https://github.com/TechDocsStudio/pushpr
 Below is an example of how to use the `push-preview-action` in a workflow:
 
 ```yaml
- name: PushPreview
-
- on:
-   pull_request_target:
-     types:
-       - labeled
-
- jobs:
-   preview:
-     runs-on: ubuntu-latest
-     if: github.event.label.name == 'preview'
-     steps:
-       - uses: actions/checkout@v3
-       - name: Comment
-         run: |
-           gh pr comment ${{ github.event.pull_request.number }} --repo ${{ github.repository }} --body "⚙️ Hang tight! PushPreview is currently building your preview. We'll share the URL as soon as it's ready."
-         env:
-           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-       - uses: actions/setup-node@v3
-         with:
-           node-version: 18
-
-       - name: Set BASE_URL
-         run: echo "BASE_URL=/github/${{ github.repository }}/${{ github.event.number }}/" >> $GITHUB_ENV
-       
-       # Replace with your docs build commands
-       - name: Build site
-         run: |
-           cd docs
-           yarn install --frozen-lockfile
-           yarn build
-
-       - name: Generate preview
-         uses: TechDocsStudio/pushpreview-action@1.0.6
-         with:
-           # Replace with your docs output directory
-           source-directory: ./docs/build
-           github-token: ${{ secrets.GITHUB_TOKEN }}
-           pushpreview-token: ${{ secrets.PUSHPREVIEW_TOKEN }}
+name: PushPreview
+on:
+  pull_request_target:
+    types:
+      - labeled
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    if: github.event.label.name == 'preview'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+      - name: Comment
+        run: |
+          gh pr comment ${{ github.event.pull_request.number }} --repo ${{ github.repository }} --body "⚙️ Hang tight! PushPreview is currently building your preview. We'll share the URL as soon as it's ready."
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - name: Set BASE_URL
+        run: echo "BASE_URL=/github/${{ github.repository }}/${{ github.event.number }}/" >> $GITHUB_ENV
+      - name: Build site
+        run: |
+          cd docs
+          yarn install --frozen-lockfile
+          yarn build
+      - name: Generate preview
+        uses: TechDocsStudio/pushpreview-action@1.0.6
+        with:
+          source-directory: ./docs/build
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          pushpreview-token: ${{ secrets.PUSHPREVIEW_TOKEN }}
 ```
 
 For more information on customizing the workflow to your build process, refer to the [Installation](/category/installation) section for CMS-specific guides.

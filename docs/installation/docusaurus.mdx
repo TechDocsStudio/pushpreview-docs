@@ -39,7 +39,9 @@ To set up the PushPreview workflow in your Docusaurus project:
         runs-on: ubuntu-latest
         if: github.event.label.name == 'preview'
         steps:
-          - uses: actions/checkout@v3
+          - uses: actions/checkout@v4
+            with:
+              ref: ${{ github.head_ref }}
           - name: Comment
             run: |
               gh pr comment ${{ github.event.pull_request.number }} --repo ${{ github.repository }} --body "⚙️ Hang tight! PushPreview is currently building your preview. We'll share the URL as soon as it's ready."
